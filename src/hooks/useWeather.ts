@@ -83,17 +83,21 @@ export function useWeather(apiKey: string | undefined) {
         return;
       }
 
+      // 제주도 기본 좌표 (일출랜드 근처)
+      const JEJU_LAT = 33.4394;
+      const JEJU_LON = 126.8428;
+
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
           fetchWeather(position.coords.latitude, position.coords.longitude);
         },
-        (err) => {
-          setError(`위치를 가져올 수 없습니다: ${err.message}`);
-          setLoading(false);
+        () => {
+          // 위치 권한 거부 시 제주도 기본 좌표 사용
+          fetchWeather(JEJU_LAT, JEJU_LON);
         },
         {
           enableHighAccuracy: false,
-          timeout: 10000,
+          timeout: 5000,
           maximumAge: 300000 // 5분 캐싱
         }
       );
